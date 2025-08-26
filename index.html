@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adarsh Yadav | AI/ML & Full-Stack Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application is structured as a single-page portfolio with a sticky top navigation for smooth scrolling between thematic sections (About, Experience, Projects, Skills). This design prioritizes user-driven exploration over a linear document format. The key interaction is the project section, where users can click on cards to open detailed modals, allowing for a deeper dive into specific work without cluttering the main view. This structure was chosen to make the resume more engaging and to highlight the most critical information—the projects—in an interactive, user-friendly manner. -->
+    <!-- Visualization & Content Choices: Resume Section -> Goal -> Presentation -> Interaction -> Justification. 
+    1. Summary -> Inform -> Clean Text Block -> None -> Direct and professional presentation.
+    2. Experience -> Inform -> Vertical Timeline -> None -> Chronological clarity and easy scanning.
+    3. Projects -> Organize & Detail -> Grid of Cards -> Click to open Modal -> Allows a high-level overview while providing deep-dive details on demand, preventing information overload.
+    4. Skills -> Compare & Group -> Horizontal Bar Chart (Chart.js) -> Hover for Tooltip -> Visually represents skill categories and allows users to see specific technologies on hover, making the data more digestible than a simple list.
+    5. Education/Certs -> Inform -> Simple List -> None -> Clear and concise presentation of credentials. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #403A3A;
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #D35400;
+            border-bottom-color: #D35400;
+        }
+        .section-title {
+            color: #2C3E50;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.7);
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: translateY(-20px);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+        }
+        .gemini-button {
+            background: linear-gradient(45deg, #D35400, #E67E22);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .gemini-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(211, 84, 0, 0.3);
+        }
+        .gemini-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #D35400;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-[#2C3E50]">Adarsh Yadav</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#about" class="nav-link pb-1">About</a>
+                <a href="#experience" class="nav-link pb-1">Experience</a>
+                <a href="#projects" class="nav-link pb-1">Projects</a>
+                <a href="#skills" class="nav-link pb-1">Skills</a>
+                <a href="#contact" class="nav-link pb-1">Contact</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-2xl">☰</button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-white px-6 pb-4">
+            <a href="#about" class="block py-2 text-center nav-link">About</a>
+            <a href="#experience" class="block py-2 text-center nav-link">Experience</a>
+            <a href="#projects" class="block py-2 text-center nav-link">Projects</a>
+            <a href="#skills" class="block py-2 text-center nav-link">Skills</a>
+            <a href="#contact" class="block py-2 text-center nav-link">Contact</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="hero" class="text-center py-20">
+            <h2 class="text-5xl md:text-6xl font-extrabold text-[#2C3E50] leading-tight">Adarsh Yadav</h2>
+            <p class="text-xl md:text-2xl mt-4 text-[#D35400] font-medium">AI/ML & Full-Stack Developer</p>
+            <p class="max-w-2xl mx-auto mt-6 text-lg text-gray-600">
+                Building intelligent applications and seamless user experiences from concept to deployment.
+            </p>
+        </section>
+
+        <section id="about" class="py-16">
+            <h3 class="section-title text-3xl font-bold text-center mb-12">About Me</h3>
+            <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+                <p class="text-lg text-gray-700 leading-relaxed">
+                    Results-oriented Computer Science student at Thapar Institute of Engineering and Technology (CGPA: 8.95) with a strong foundation in AI/ML and full-stack web development. I have proven experience building end-to-end applications, from MERN stack platforms to deep learning pipelines using PyTorch and TensorFlow. I am passionate about solving complex problems and eager to apply my skills to a challenging software development role.
+                </p>
+            </div>
+        </section>
+
+        <section id="experience" class="py-16">
+            <h3 class="section-title text-3xl font-bold text-center mb-12">Professional Experience</h3>
+            <div class="max-w-3xl mx-auto">
+                <div class="relative border-l-2 border-[#D35400]/50 pl-10 py-4">
+                    <div class="absolute -left-3 top-4 w-5 h-5 bg-[#D35400] rounded-full"></div>
+                    <p class="text-sm font-semibold text-gray-500">June 2024 – July 2024</p>
+                    <h4 class="text-xl font-bold mt-1 text-[#2C3E50]">Web Development Intern</h4>
+                    <p class="text-md font-medium text-gray-700">Public Works Department, Uttar Pradesh (UPPWD)</p>
+                    <ul class="mt-4 list-disc list-inside text-gray-600 space-y-2">
+                        <li>Contributed to front-end development using JavaScript and CSS, improving responsiveness and accessibility across key web applications.</li>
+                        <li>Implemented a notification alert feature that enhanced the visibility of critical updates for thousands of end-users.</li>
+                        <li>Collaborated in a sprint-based team environment, consistently delivering features on schedule through code reviews and Git workflows.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-16">
+            <h3 class="section-title text-3xl font-bold text-center mb-12">Projects Showcase</h3>
+            <div id="project-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+        </section>
+
+        <section id="skills" class="py-16">
+            <h3 class="section-title text-3xl font-bold text-center mb-12">Technical Skills</h3>
+            <p class="text-center max-w-2xl mx-auto mb-8 text-gray-600">This chart visualizes my proficiency across different technology domains. Hover over any bar to see the specific languages, frameworks, and tools I've worked with in that category.</p>
+            <div class="chart-container bg-white p-4 rounded-lg shadow-md">
+                <canvas id="skillsChart"></canvas>
+            </div>
+        </section>
+
+        <section id="education" class="py-16">
+             <h3 class="section-title text-3xl font-bold text-center mb-12">Education & Certifications</h3>
+             <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h4 class="text-xl font-bold text-[#2C3E50]">Thapar Institute of Engineering and Technology</h4>
+                    <p class="font-medium text-gray-600">Bachelor of Engineering, Computer Science</p>
+                    <p class="text-sm text-gray-500">Patiala, Punjab | 2022 – Present</p>
+                    <p class="mt-2 font-semibold text-[#D35400]">CGPA: 8.95 / 10.0</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                    <div>
+                        <h4 class="text-xl font-bold text-[#2C3E50]">Supervised Machine Learning</h4>
+                        <p class="font-medium text-gray-600">DeepLearning.AI & Stanford University</p>
+                        <p class="text-sm text-gray-500">Issued July 2024</p>
+                    </div>
+                     <div>
+                        <h4 class="text-xl font-bold text-[#2C3E50]">Web Development Training</h4>
+                        <p class="font-medium text-gray-600">InternsElite</p>
+                        <p class="text-sm text-gray-500">Issued July 2023</p>
+                    </div>
+                </div>
+             </div>
+        </section>
+        
+        <section id="contact" class="text-center py-20 bg-white rounded-lg shadow-md">
+            <h3 class="section-title text-3xl font-bold mb-4">Get In Touch</h3>
+            <p class="max-w-xl mx-auto text-gray-600 mb-8">I'm currently seeking new opportunities and would love to hear from you. Feel free to reach out via email or connect with me on LinkedIn.</p>
+            <div class="flex justify-center items-center space-x-6">
+                <a href="mailto:adarsh2006yadav@gmail.com" class="text-lg font-medium text-[#D35400] hover:underline">adarsh2006yadav@gmail.com</a>
+                <span class="text-gray-300">|</span>
+                <a href="#" class="text-lg font-medium text-[#D35400] hover:underline">LinkedIn</a>
+                 <span class="text-gray-300">|</span>
+                <a href="#" class="text-lg font-medium text-[#D35400] hover:underline">GitHub</a>
+            </div>
+        </section>
+    </main>
+
+    <div id="project-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+        <div id="modal-backdrop" class="modal-backdrop fixed inset-0"></div>
+        <div id="modal-content" class="modal-content bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative z-10 p-8">
+            <button id="modal-close-button" class="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-800">&times;</button>
+            <h3 id="modal-title" class="text-3xl font-bold text-[#2C3E50] mb-2"></h3>
+            <p id="modal-date" class="text-sm text-gray-500 mb-4"></p>
+            <div id="modal-description" class="text-gray-700 space-y-3 mb-6"></div>
+            <h4 class="text-lg font-semibold text-[#2C3E50] mb-3">Technologies Used:</h4>
+            <div id="modal-tags" class="flex flex-wrap gap-2 mb-6"></div>
+            <div class="border-t pt-6">
+                <button id="gemini-summary-button" class="gemini-button text-white font-bold py-2 px-4 rounded-full w-full flex items-center justify-center gap-2">
+                    <span>✨ Quick Summary</span>
+                </button>
+                <div id="gemini-summary-output" class="mt-4 bg-orange-50 p-4 rounded-lg text-orange-800 border border-orange-200 hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const projectsData = [
+                {
+                    id: 'gold-loan',
+                    title: 'Gold Loan Management System',
+                    date: 'July 2025 – August 2025',
+                    description: [
+                        'Architected and developed a full-stack loan management system using Node.js, Express, React, and SQLite to digitize a real-world business.',
+                        'Built a RESTful API to handle all CRUD operations and implemented a `node-cron` service for automated, scheduled daily interest calculations.',
+                        'Engineered a secure image upload and storage module using Multer for managing customer collateral, significantly improving record-keeping and verification.'
+                    ],
+                    tags: ['React', 'Node.js', 'Express', 'SQLite', 'REST API', 'Multer', 'node-cron'],
+                    summary: null
+                },
+                {
+                    id: 'asr-captcha',
+                    title: 'Automatic Speech Recognition CAPTCHA Solver',
+                    date: 'February 2025 – March 2025',
+                    description: [
+                        'Fine-tuned a Wav2Vec2 transformer model for audio CAPTCHA speech-to-text, engineering a complete data, training, evaluation, and inference pipeline in PyTorch.',
+                        'Achieved a high accuracy rate on noisy audio inputs by implementing advanced techniques like SpecAugment, SNR mixing, and beam search decoding.'
+                    ],
+                    tags: ['PyTorch', 'Transformers', 'Wav2Vec2', 'NLP', 'Deep Learning', 'Python'],
+                    summary: null
+                },
+                {
+                    id: 'sign-language',
+                    title: 'Sign Language Detection',
+                    date: 'October 2024',
+                    description: [
+                        'Developed a real-time YOLOv5 and OpenCV pipeline to detect and classify hand signs from a live webcam feed.',
+                        'Achieved high frames-per-second (FPS) on a standard CPU and excellent mean Average Precision (mAP) on a custom-validated dataset, demonstrating efficient model deployment.'
+                    ],
+                    tags: ['Python', 'OpenCV', 'YOLOv5', 'Computer Vision', 'Machine Learning'],
+                    summary: null
+                },
+                {
+                    id: 'aahaar',
+                    title: 'Aahaar – Food Donation Platform',
+                    date: 'December 2023 – February 2024',
+                    description: [
+                        'Architected and deployed a full-stack MERN application to connect food donors with NGOs, featuring JWT authentication, role-based access control, and automated email/SMS notifications.',
+                        'The donation lifecycle tracking system cut coordination overhead for NGOs by a significant margin; deployed on Vercel with MongoDB Atlas.'
+                    ],
+                    tags: ['MERN', 'React', 'Node.js', 'Express', 'MongoDB', 'JWT', 'Vercel'],
+                    summary: null
+                },
+                {
+                    id: 'news-aggregator',
+                    title: 'Real-Time News Aggregator',
+                    date: 'March 2023',
+                    description: [
+                        'Built a responsive single-page application in React that consumes third-party news APIs, featuring client-side caching, pagination, and category filters.',
+                        'Optimized front-end performance to achieve a Lighthouse score of 95+, ensuring a fast and seamless user experience.'
+                    ],
+                    tags: ['React', 'REST API', 'JavaScript', 'HTML/CSS', 'Performance Optimization'],
+                    summary: null
+                }
+            ];
+
+            const projectGrid = document.getElementById('project-grid');
+            projectsData.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'card bg-white p-6 rounded-lg shadow-md cursor-pointer';
+                card.dataset.projectId = project.id;
+                card.innerHTML = `
+                    <h4 class="text-xl font-bold text-[#2C3E50]">${project.title}</h4>
+                    <p class="text-sm text-gray-500 mt-1">${project.date}</p>
+                    <p class="text-gray-600 mt-3">${project.description[0].substring(0, 100)}...</p>
+                    <div class="flex flex-wrap gap-2 mt-4">
+                        ${project.tags.slice(0, 3).map(tag => `<span class="bg-[#D35400]/10 text-[#D35400] text-xs font-semibold px-2.5 py-0.5 rounded-full">${tag}</span>`).join('')}
+                    </div>
+                `;
+                projectGrid.appendChild(card);
+            });
+
+            const modal = document.getElementById('project-modal');
+            const modalBackdrop = document.getElementById('modal-backdrop');
+            const modalCloseButton = document.getElementById('modal-close-button');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDate = document.getElementById('modal-date');
+            const modalDescription = document.getElementById('modal-description');
+            const modalTags = document.getElementById('modal-tags');
+            const geminiSummaryButton = document.getElementById('gemini-summary-button');
+            const geminiSummaryOutput = document.getElementById('gemini-summary-output');
+
+            let currentProjectId = null;
+
+            projectGrid.addEventListener('click', (e) => {
+                const card = e.target.closest('.card');
+                if (card) {
+                    currentProjectId = card.dataset.projectId;
+                    const project = projectsData.find(p => p.id === currentProjectId);
+                    if (project) {
+                        modalTitle.textContent = project.title;
+                        modalDate.textContent = project.date;
+                        modalDescription.innerHTML = project.description.map(p => `<p>${p}</p>`).join('');
+                        modalTags.innerHTML = project.tags.map(tag => `<span class="bg-[#2C3E50]/10 text-[#2C3E50] text-sm font-medium px-3 py-1 rounded-full">${tag}</span>`).join('');
+                        
+                        geminiSummaryButton.disabled = false;
+                        geminiSummaryButton.innerHTML = '<span>✨ Quick Summary</span>';
+                        geminiSummaryOutput.classList.add('hidden');
+                        
+                        if (project.summary) {
+                            geminiSummaryOutput.textContent = project.summary;
+                            geminiSummaryOutput.classList.remove('hidden');
+                            geminiSummaryButton.disabled = true;
+                        }
+
+                        modal.classList.remove('hidden');
+                        modal.classList.add('flex');
+                        document.body.style.overflow = 'hidden';
+                    }
+                }
+            });
+
+            const closeModal = () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+                currentProjectId = null;
+            };
+
+            modalBackdrop.addEventListener('click', closeModal);
+            modalCloseButton.addEventListener('click', closeModal);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            async function callGeminiAPI(prompt, maxRetries = 3) {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                
+                let attempt = 0;
+                while (attempt < maxRetries) {
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+                        if (result.candidates && result.candidates[0] && result.candidates[0].content.parts[0].text) {
+                            return result.candidates[0].content.parts[0].text;
+                        } else {
+                            throw new Error('Invalid API response structure');
+                        }
+                    } catch (error) {
+                        attempt++;
+                        if (attempt >= maxRetries) {
+                            return "Sorry, I couldn't generate a response right now.";
+                        }
+                        const delay = Math.pow(2, attempt) * 100;
+                        await new Promise(res => setTimeout(res, delay));
+                    }
+                }
+            }
+
+            geminiSummaryButton.addEventListener('click', async () => {
+                if (!currentProjectId) return;
+
+                const project = projectsData.find(p => p.id === currentProjectId);
+                if (project && !project.summary) {
+                    geminiSummaryButton.disabled = true;
+                    geminiSummaryButton.innerHTML = '<div class="loader"></div><span>Generating...</span>';
+
+                    const prompt = `Summarize this software project for a technical recruiter in one compelling sentence: "${project.title} - ${project.description.join(' ')}"`;
+                    const summary = await callGeminiAPI(prompt);
+                    
+                    project.summary = summary;
+                    geminiSummaryOutput.textContent = summary;
+                    geminiSummaryOutput.classList.remove('hidden');
+                    geminiSummaryButton.innerHTML = '<span>✨ Quick Summary</span>';
+                }
+            });
+
+            const skillsDetails = {
+                'AI / Machine Learning': 'PyTorch, TensorFlow, Scikit-learn, OpenCV, NLP (Transformers, Wav2Vec2), YOLO',
+                'Web Development': 'React, Node.js, Express.js, HTML, CSS',
+                'Databases & DevOps': 'MongoDB, SQLite, Git, GitHub, REST APIs, Agile',
+                'Languages': 'Python, JavaScript, C/C++, SQL'
+            };
+
+            const skillsData = {
+                labels: ['AI / Machine Learning', 'Web Development', 'Databases & DevOps', 'Languages'],
+                datasets: [{
+                    label: 'Number of Key Technologies',
+                    data: [6, 4, 6, 4],
+                    backgroundColor: ['rgba(211, 84, 0, 0.7)', 'rgba(44, 62, 80, 0.7)', 'rgba(127, 140, 141, 0.7)', 'rgba(243, 156, 18, 0.7)'],
+                    borderColor: ['#D35400', '#2C3E50', '#7F8C8D', '#F39C12'],
+                    borderWidth: 1
+                }]
+            };
+            
+            const ctx = document.getElementById('skillsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: skillsData,
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => `${context.dataset.label || ''}: ${context.raw}`,
+                                afterLabel: (context) => skillsDetails[context.label] || ''
+                            },
+                            backgroundColor: '#2C3E50', titleFont: { size: 16 }, bodyFont: { size: 14 }, padding: 12, displayColors: false
+                        }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        y: { grid: { display: false }, ticks: { font: { size: 14, weight: '500' } } }
+                    }
+                }
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            document.querySelectorAll('#mobile-menu a').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+        });
+    </script>
+</body>
+</html>
